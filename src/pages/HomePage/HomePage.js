@@ -1,17 +1,13 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-import Typography from "@material-ui/core/Typography";
-
 import BasePage from "../BasePage/BasePage";
 
-import WalletContentList from '../../components/WalletContentList'
+import WalletContentsTable from '../../components/WalletContentsTable'
 
 const HomePage = ({ tmui, setTmuiProp }) => (
   <BasePage tmui={tmui} setTmuiProp={setTmuiProp}>
-
-    <WalletContentList/>
-
+    <WalletContentsTable />
   </BasePage>
 );
 

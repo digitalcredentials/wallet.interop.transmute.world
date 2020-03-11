@@ -1,12 +1,12 @@
 import React from "react";
-import HomePage from "./HomePage";
+import ChapiWalletStore from "./ChapiWalletStore";
 
 import { compose } from "redux";
 
-import tmui from "../../store/tmui";
+import tmui from "../../../../store/tmui";
 
 const container = compose(tmui.container);
 
 export default container(props => {
-  return <HomePage {...props} />;
+  return <ChapiWalletStore {...props} />;
 });
