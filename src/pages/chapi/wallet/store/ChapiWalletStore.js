@@ -65,7 +65,7 @@ const ChapiWalletStore = ({ tmui, setTmuiProp }) => {
     credentialHandlerPolyfill
       .loadOnce()
       .then(handleStoreEvent);
-  }, [state])
+  }, [])
 
   if (!state.credential) {
     return <Loading message={'Loading credential...'} />

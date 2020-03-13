@@ -61,33 +61,12 @@ const ChapiWalletGet = ({ tmui, setTmuiProp }) => {
           walletRows
         })
       }
-
-      // if (!walletContents) {
-      //   return addToWalletDisplay({ text: 'none' });
-      // }
-
-      // for (const id in walletContents) {
-      //   const vp = walletContents[id];
-      //   const vc = Array.isArray(vp.verifiableCredential)
-      //     ? vp.verifiableCredential[0]
-      //     : vp.verifiableCredential;
-      //   const types = vc.type;
-      //   const type = types.slice(1).join('/');
-      //   addToWalletDisplay({
-      //     text: `${type} from ${vc.issuer}`,
-      //     vc,
-      //     button: {
-      //       text: 'Share',
-      //       sourceEvent: event
-      //     }
-      //   });
-      // }
     }
 
     credentialHandlerPolyfill
       .loadOnce()
       .then(handleGetEvent);
-  }, [state])
+  }, [])
 
 
   return (

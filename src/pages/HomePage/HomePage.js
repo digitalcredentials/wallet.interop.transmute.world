@@ -48,7 +48,7 @@ const HomePage = ({ tmui, setTmuiProp }) => {
           })
         }
       })
-  }, [state])
+  }, [])
 
   return (
     <BasePage tmui={tmui} setTmuiProp={setTmuiProp}>
