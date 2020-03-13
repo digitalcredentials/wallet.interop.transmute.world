@@ -12,7 +12,10 @@ import CredentialCard from '../../../../components/CredentialCard/CredentialCard
 const { Cookies, WebCredentialHandler, credentialHandlerPolyfill } = window;
 
 function loadWalletContents() {
-  const walletContents = Cookies.get('walletContents');
+  let walletContents = Cookies.get('walletContents');
+  if (!walletContents) {
+    walletContents = localStorage.getItem('walletContents');
+  }
   if (!walletContents) {
     return null;
   }
@@ -31,6 +34,7 @@ function storeInWallet(verifiablePresentation) {
   const serialized = btoa(JSON.stringify(walletContents));
   Cookies.set('walletContents', serialized, { path: '', secure: true, sameSite: 'None' });
   // console.log('here...', walletContents)
+  localStorage.setItem('walletContents', serialized);
 }
 
 
@@ -69,7 +73,7 @@ const ChapiWalletStore = ({ tmui, setTmuiProp }) => {
   return (
     <Theme>
       <div style={{ height: '100%', padding: '16px' }}>
-        <Typography variant={'h6'} style={{ marginBottom: '16px', marginTop: '8px' }}>Are you sure you wish to store this credential?</Typography>
+        <Typography style={{ marginBottom: '16px', marginTop: '8px' }}>Are you sure you wish to store this credential?</Typography>
 
         <CredentialCard vc={state.vc} />
 
