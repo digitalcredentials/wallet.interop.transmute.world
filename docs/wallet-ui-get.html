@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <title>Minimal Dev Wallet - Wallet Get UI</title>
   <meta charset="utf-8">
@@ -12,103 +13,108 @@
   <!--Simple cookie lib-->
   <script src="https://cdn.jsdelivr.net/npm/js-cookie@beta/dist/js.cookie.min.js"></script>
 </head>
+
 <body>
 
-<div class="container">
-  <h5>Wallet get() event</h5>
+  <div class="container">
+    <h5>Wallet get() event</h5>
 
-  <div class="card-panel">
-    <div id="confirm">
-      <p>EDV <span id="requestOrigin"></span> is requesting to store a credential</p>
+    <div class="card-panel">
+      <div id="confirm">
+        <p>EDV <span id="requestOrigin"></span> is requesting to store a credential</p>
 
-      <h6>Wallet Contents:</h6>
-      <ol id="walletContents"></ol>
+        <h6>Wallet Contents:</h6>
+        <ol id="walletContents"></ol>
+      </div>
     </div>
   </div>
-</div>
 
-<script>
-  function loadWalletContents() {
-    const walletContents = Cookies.get('walletContents');
-    if(!walletContents) {
-      return null;
-    }
-    return JSON.parse(atob(walletContents));
-  }
-
-  function addToWalletDisplay({text, vc, button}) {
-    const li = document.createElement('li');
-
-    if(button) {
-      const buttonNode = document.createElement('a');
-      buttonNode.classList.add('waves-effect', 'waves-light', 'btn-small');
-      buttonNode.setAttribute('id', vc.id);
-      buttonNode.appendChild(document.createTextNode(button.text));
-      li.appendChild(buttonNode);
+  <script>
+    function loadWalletContents() {
+      let walletContents = Cookies.get('walletContents');
+      if (!walletContents) {
+        walletContents = localStorage.getItem('walletContents');
+      }
+      if (!walletContents) {
+        return null;
+      }
+      return JSON.parse(atob(walletContents));
     }
 
-    li.appendChild(document.createTextNode(' ' + text));
+    function addToWalletDisplay({ text, vc, button }) {
+      const li = document.createElement('li');
 
-    document.getElementById('walletContents')
-      .appendChild(li);
+      if (button) {
+        const buttonNode = document.createElement('a');
+        buttonNode.classList.add('waves-effect', 'waves-light', 'btn-small');
+        buttonNode.setAttribute('id', vc.id);
+        buttonNode.appendChild(document.createTextNode(button.text));
+        li.appendChild(buttonNode);
+      }
 
-    if(button) {
-      document.getElementById(vc.id).addEventListener('click', () => {
-        const vp = {
-          "@context": [
-            "https://www.w3.org/2018/credentials/v1",
-            "https://www.w3.org/2018/credentials/examples/v1"
-          ],
-          "type": "VerifiablePresentation",
-          "verifiableCredential": vc
-        }
-        console.log('wrapping and returning vc:', vp);
-        button.sourceEvent
-          .respondWith(Promise.resolve({dataType: 'VerifiablePresentation', data: vp}));
-      });
-    }
-  }
+      li.appendChild(document.createTextNode(' ' + text));
 
-  async function handleGetEvent() {
-    const event = await WebCredentialHandler.receiveCredentialEvent();
-    console.log('Wallet processing get() event:', event);
+      document.getElementById('walletContents')
+        .appendChild(li);
 
-    document.getElementById('requestOrigin').innerHTML = event.credentialRequestOrigin;
-
-    const vp = event.credentialRequestOptions.web.VerifiablePresentation;
-    const query = Array.isArray(vp.query) ? vp.query[0] : vp.query;
-
-    if(!query.type === 'QueryByExample') {
-      throw new Error('Only QueryByExample requests are supported in demo wallet.');
+      if (button) {
+        document.getElementById(vc.id).addEventListener('click', () => {
+          const vp = {
+            "@context": [
+              "https://www.w3.org/2018/credentials/v1",
+              "https://www.w3.org/2018/credentials/examples/v1"
+            ],
+            "type": "VerifiablePresentation",
+            "verifiableCredential": vc
+          }
+          console.log('wrapping and returning vc:', vp);
+          button.sourceEvent
+            .respondWith(Promise.resolve({ dataType: 'VerifiablePresentation', data: vp }));
+        });
+      }
     }
 
-    const walletContents = loadWalletContents();
-    if(!walletContents) {
-      return addToWalletDisplay({text: 'none'});
+    async function handleGetEvent() {
+      const event = await WebCredentialHandler.receiveCredentialEvent();
+      console.log('Wallet processing get() event:', event);
+
+      document.getElementById('requestOrigin').innerHTML = event.credentialRequestOrigin;
+
+      const vp = event.credentialRequestOptions.web.VerifiablePresentation;
+      const query = Array.isArray(vp.query) ? vp.query[0] : vp.query;
+
+      if (!query.type === 'QueryByExample') {
+        throw new Error('Only QueryByExample requests are supported in demo wallet.');
+      }
+
+      const walletContents = loadWalletContents();
+      if (!walletContents) {
+        return addToWalletDisplay({ text: 'none' });
+      }
+
+      for (const id in walletContents) {
+        const vp = walletContents[id];
+        const vc = Array.isArray(vp.verifiableCredential)
+          ? vp.verifiableCredential[0]
+          : vp.verifiableCredential;
+        const types = vc.type;
+        const type = types.slice(1).join('/');
+        addToWalletDisplay({
+          text: `${type} from ${vc.issuer}`,
+          vc,
+          button: {
+            text: 'Share',
+            sourceEvent: event
+          }
+        });
+      }
     }
 
-    for(const id in walletContents) {
-      const vp = walletContents[id];
-      const vc = Array.isArray(vp.verifiableCredential)
-        ? vp.verifiableCredential[0]
-        : vp.verifiableCredential;
-      const types = vc.type;
-      const type = types.slice(1).join('/');
-      addToWalletDisplay({
-        text: `${type} from ${vc.issuer}`,
-        vc,
-        button: {
-          text: 'Share',
-          sourceEvent: event
-        }
-      });
-    }
-  }
-
-  credentialHandlerPolyfill
-    .loadOnce()
-    .then(handleGetEvent);
-</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    credentialHandlerPolyfill
+      .loadOnce()
+      .then(handleGetEvent);
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 </body>
+
 </html>
