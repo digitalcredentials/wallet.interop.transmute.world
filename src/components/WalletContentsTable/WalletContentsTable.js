@@ -28,7 +28,7 @@ function WalletContentsTable(props) {
 
     return (
         <MaterialTable
-            title="Options"
+            title={props.title || 'Options'}
             columns={[
                 // { title: 'ID', field: 'id' },
                 {

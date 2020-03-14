@@ -176,10 +176,10 @@ function ResponsiveDrawer(props) {
               style={{ height: '28px' }}
             />
           ) : (
-            <Typography className={classes.title} variant="h6" noWrap>
-              {props.headerText}
-            </Typography>
-          )}
+              <Typography className={classes.title} variant="h6" noWrap>
+                {props.headerText}
+              </Typography>
+            )}
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
             {props.rightHandAccountMenu.map(menuItem => {

@@ -5,54 +5,24 @@ import BasePage from "../BasePage/BasePage";
 
 import WalletContentsTable from '../../components/WalletContentsTable'
 
-const { Cookies, credentialHandlerPolyfill } = window;
+const { credentialHandlerPolyfill } = window;
 
 
-function loadWalletContents() {
-  let walletContents = Cookies.get('walletContents');
-  if (!walletContents) {
-    walletContents = localStorage.getItem('walletContents');
-  }
-  if (!walletContents) {
-    return null;
-  }
-  return JSON.parse(atob(walletContents));
-}
-const HomePage = ({ tmui, setTmuiProp }) => {
-  const [state, setState] = React.useState({})
+const HomePage = (props) => {
+  const { tmui, setTmuiProp } = props;
   React.useEffect(() => {
     credentialHandlerPolyfill
       .loadOnce()
       .then(() => {
-        const walletContents = loadWalletContents();
-        setState({
-          ...state,
-          walletLoaded: true
-        })
-        if (walletContents) {
-          const walletRows = [];
-          Object.values(walletContents).forEach((wc) => {
-            if (wc.id) {
-              walletRows.push(wc);
-            } else {
-              if (wc.verifiableCredential) {
-                wc.verifiableCredential.forEach((vc) => {
-                  walletRows.push(vc);
-                })
-              }
-            }
-          })
-          setState({
-            ...state,
-            walletRows
-          })
+        if (!props.chapi.wallet.isLoaded) {
+          props.loadWalletContents();
         }
       })
   }, [])
 
   return (
     <BasePage tmui={tmui} setTmuiProp={setTmuiProp}>
-      <WalletContentsTable walletRows={state.walletRows} />
+      <WalletContentsTable title={'Wallet'} walletRows={props.walletObjectToArray(props.chapi.wallet.object)} />
     </BasePage>
   )
 };

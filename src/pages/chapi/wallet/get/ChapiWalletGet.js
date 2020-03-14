@@ -6,75 +6,45 @@ import Theme from '../../../../components/Theme/Theme'
 
 import WalletContentsTable from '../../../../components/WalletContentsTable'
 
-const { Cookies, WebCredentialHandler, credentialHandlerPolyfill } = window;
+const { WebCredentialHandler, credentialHandlerPolyfill } = window;
 
-function loadWalletContents() {
-  let walletContents = Cookies.get('walletContents');
-  if (!walletContents) {
-    walletContents = localStorage.getItem('walletContents');
-  }
-  if (!walletContents) {
-    return null;
-  }
-  return JSON.parse(atob(walletContents));
-}
-
-const ChapiWalletGet = ({ tmui, setTmuiProp }) => {
-
+const ChapiWalletGet = (props) => {
   const [state, setState] = React.useState({})
+  React.useEffect(() => {
+    credentialHandlerPolyfill
+      .loadOnce()
+      .then(() => {
+        if (!props.chapi.wallet.isLoaded) {
+          props.loadWalletContents();
+        }
+      })
+  }, [])
 
   React.useEffect(() => {
     async function handleGetEvent() {
       const event = await WebCredentialHandler.receiveCredentialEvent();
       console.log('Wallet processing get() event:', event);
-
-      // document.getElementById('requestOrigin').innerHTML = event.credentialRequestOrigin;
-
       const vp = event.credentialRequestOptions.web.VerifiablePresentation;
       const query = Array.isArray(vp.query) ? vp.query[0] : vp.query;
-
       if (!query.type === 'QueryByExample') {
         throw new Error('Only QueryByExample requests are supported in demo wallet.');
       }
-
-      const walletContents = loadWalletContents();
       setState({
         ...state,
-        walletLoaded: true
+        event,
       })
-      if (walletContents) {
-        const walletRows = [];
-        Object.values(walletContents).forEach((wc) => {
-          if (wc.id) {
-            walletRows.push(wc);
-          } else {
-            if (wc.verifiableCredential) {
-              wc.verifiableCredential.forEach((vc) => {
-                walletRows.push(vc);
-              })
-            }
-          }
-        })
-        setState({
-          ...state,
-          event,
-          walletRows
-        })
-      }
     }
-
     credentialHandlerPolyfill
       .loadOnce()
       .then(handleGetEvent);
   }, [])
 
-
   return (
     <Theme>
-      <div style={{ height: '100%', padding: '16px' }}>
-        <Typography style={{ marginBottom: '16px', marginTop: '8px' }}>{window.origin} Is requesting a credential.</Typography>
+      <div style={{ height: '100%', padding: '8px' }}>
+        <Typography style={{ marginBottom: '8px', marginTop: '4px' }}>{window.origin} Is requesting a credential.</Typography>
 
-        <WalletContentsTable walletRows={state.walletRows} onShare={(vc) => {
+        <WalletContentsTable walletRows={props.walletObjectToArray(props.chapi.wallet.object)} onShare={(vc) => {
           const vp = {
             "@context": [
               "https://www.w3.org/2018/credentials/v1",

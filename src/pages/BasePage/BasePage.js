@@ -14,35 +14,38 @@ import logo from "../../components/Logo/logo.svg";
 
 const BasePage = ({ tmui, setTmuiProp, children }) => {
   React.useEffect(() => {
-    (async () => {
-      try {
-        await chapi.loadOnce();
-
-        const WALLET_LOCATION = window.origin;
-        const workerUrl = `${WALLET_LOCATION}/worker.html`;
-        const registration = await WebCredentialHandler.installHandler({ url: workerUrl });
-        await registration.credentialManager.hints.set(
-          'test', {
-          name: 'TestUser',
-          enabledTypes: ['VerifiablePresentation', 'VerifiableCredential', 'UniversityDegreeCredential']
-        });
-        console.log('Wallet registered.');
-      } catch (e) {
-        console.error('Error in loadOnce:', e);
-      }
-    })();
+    if (!window.__chapi__run__once) {
+      (async () => {
+        try {
+          await chapi.loadOnce();
+          const WALLET_LOCATION = window.origin;
+          const workerUrl = `${WALLET_LOCATION}/worker.html`;
+          const registration = await WebCredentialHandler.installHandler({ url: workerUrl });
+          await registration.credentialManager.hints.set(
+            'test', {
+            name: 'TestUser',
+            enabledTypes: ['VerifiablePresentation', 'VerifiableCredential', 'UniversityDegreeCredential']
+          });
+          console.log('Wallet registered.');
+        } catch (e) {
+          console.error('Error in loadOnce:', e);
+        }
+      })();
+    }
+    window.__chapi__run__once = true;
   })
   return (
-  <Theme>
-    <AppBarWithDrawer
+    <Theme>
+      <AppBarWithDrawer
         rightHandAccountMenu={rightHandAccountMenu}
         headerImage={logo}
         drawer={<DrawerContent tmui={tmui} setTmuiProp={setTmuiProp} />}
         content={children}
       />
-    <Snackbar tmui={tmui} setTmuiProp={setTmuiProp} />
-  </Theme>
-)};
+      <Snackbar tmui={tmui} setTmuiProp={setTmuiProp} />
+    </Theme>
+  )
+};
 
 BasePage.propTypes = {
   children: PropTypes.any.isRequired,
