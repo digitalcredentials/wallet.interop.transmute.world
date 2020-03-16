@@ -32,6 +32,8 @@ export default function CredentialCard({ vc }) {
 
     const types = vc.type;
     const type = types.slice(1).join('/');
+    const issuer = typeof vc.issuer === 'string' ? vc.issuer : vc.issuer.id;
+    const subject = vc.credentialSubject.id || 'UNDEFINED';
 
     return (
         <Card className={classes.root}>
@@ -50,7 +52,7 @@ export default function CredentialCard({ vc }) {
                                             <Fingerprint />
                                         </Avatar>
                                     </ListItemAvatar>
-                                    <ListItemText primary="Subject" secondary={vc.credentialSubject.id} />
+                                    <ListItemText primary="Subject" secondary={subject} />
                                 </ListItem>
                             </List>
                         </Grid>
@@ -62,7 +64,7 @@ export default function CredentialCard({ vc }) {
                                             <AccountBalance />
                                         </Avatar>
                                     </ListItemAvatar>
-                                    <ListItemText primary="Issuer" secondary={vc.issuer} />
+                                    <ListItemText primary="Issuer" secondary={issuer} />
                                 </ListItem>
                             </List>
                         </Grid>

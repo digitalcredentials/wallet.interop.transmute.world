@@ -22,7 +22,7 @@ const ChapiWalletStore = (props) => {
       }
 
       const event = await WebCredentialHandler.receiveCredentialEvent();
-      console.log('Store Credential Event:', event.type, event);
+      console.log('Store Credential Event:', JSON.stringify(event, null, 2));
       const credential = event.credential;
       // Display the credential details, for confirmation
       const vp = credential.data;
