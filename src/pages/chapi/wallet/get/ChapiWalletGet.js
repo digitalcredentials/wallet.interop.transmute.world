@@ -9,7 +9,9 @@ import WalletContentsTable from '../../../../components/WalletContentsTable'
 const { WebCredentialHandler, credentialHandlerPolyfill } = window;
 
 const ChapiWalletGet = (props) => {
-  const [state, setState] = React.useState({})
+  const [state, setState] = React.useState({
+    event: {}
+  })
   React.useEffect(() => {
     credentialHandlerPolyfill
       .loadOnce()
@@ -42,7 +44,7 @@ const ChapiWalletGet = (props) => {
   return (
     <Theme>
       <div style={{ height: '100%', padding: '8px' }}>
-        <Typography style={{ marginBottom: '8px', marginTop: '4px' }}>{window.origin} Is requesting a credential.</Typography>
+        <Typography style={{ marginBottom: '8px', marginTop: '4px' }}>{state.event.credentialRequestOrigin} Is requesting a credential.</Typography>
 
         <WalletContentsTable walletRows={props.walletObjectToArray(props.chapi.wallet.object)} onShare={(vc) => {
           const vp = {
