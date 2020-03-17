@@ -46,6 +46,7 @@
     "redux-devtools-extension": "^2.13.8",
     "redux-persist": "^6.0.0",
     "redux-thunk": "^2.3.0",
+    "uuid": "^7.0.2",
     "vc-js": "^0.4.1",
     "web-credential-handler": "^1.0.1",
     "x25519-key-pair": "github:digitalbazaar/x25519-key-pair#initial"

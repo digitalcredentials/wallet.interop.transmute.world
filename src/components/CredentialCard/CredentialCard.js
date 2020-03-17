@@ -29,11 +29,39 @@ const useStyles = makeStyles({
 
 export default function CredentialCard({ vc }) {
     const classes = useStyles();
+    let type = undefined
+    let date = undefined
+    let issuer = undefined
+    let subject = undefined
 
-    const types = vc.type;
-    const type = types.slice(1).join('/');
-    const issuer = typeof vc.issuer === 'string' ? vc.issuer : vc.issuer.id;
-    const subject = vc.credentialSubject.id || 'UNDEFINED';
+    console.log(vc)
+
+    if (vc.type) {
+        type = !Array.isArray(vc.type)
+            ? vc.type
+            : vc.type.slice(1).join('/');
+    }
+
+    if (type === 'VerifiablePresentation') {
+        type = 'DIDAuth'
+    }
+
+    if (vc.issuer) {
+        issuer = typeof vc.issuer === 'string' ? vc.issuer : vc.issuer.id;
+    }
+
+    if (vc.credentialSubject) {
+        subject = vc.credentialSubject.id
+    }
+
+    if (vc.holder) {
+        subject = vc.holder;
+        issuer = vc.holder;
+    }
+
+    if (vc.issuanceDate) {
+        date = moment(vc.issuanceDate).format('LLL')
+    }
 
     return (
         <Card className={classes.root}>
@@ -44,42 +72,51 @@ export default function CredentialCard({ vc }) {
                     </Typography>
 
                     <Grid container>
-                        <Grid item xs={12}>
-                            <List>
-                                <ListItem>
-                                    <ListItemAvatar>
-                                        <Avatar>
-                                            <Fingerprint />
-                                        </Avatar>
-                                    </ListItemAvatar>
-                                    <ListItemText primary="Subject" secondary={subject} />
-                                </ListItem>
-                            </List>
-                        </Grid>
-                        <Grid item xs={6}>
-                            <List>
-                                <ListItem>
-                                    <ListItemAvatar>
-                                        <Avatar>
-                                            <AccountBalance />
-                                        </Avatar>
-                                    </ListItemAvatar>
-                                    <ListItemText primary="Issuer" secondary={issuer} />
-                                </ListItem>
-                            </List>
-                        </Grid>
-                        <Grid item xs={6}>
-                            <List>
-                                <ListItem>
-                                    <ListItemAvatar>
-                                        <Avatar>
-                                            <Schedule />
-                                        </Avatar>
-                                    </ListItemAvatar>
-                                    <ListItemText primary="Date" secondary={moment(vc.issuanceDate).format('LLL')} />
-                                </ListItem>
-                            </List>
-                        </Grid>
+                        {
+                            subject && <Grid item xs={12}>
+                                <List>
+                                    <ListItem>
+                                        <ListItemAvatar>
+                                            <Avatar>
+                                                <Fingerprint />
+                                            </Avatar>
+                                        </ListItemAvatar>
+                                        <ListItemText primary="Subject" secondary={subject} />
+                                    </ListItem>
+                                </List>
+                            </Grid>
+                        }
+
+                        {
+                            issuer && <Grid item xs={6}>
+                                <List>
+                                    <ListItem>
+                                        <ListItemAvatar>
+                                            <Avatar>
+                                                <AccountBalance />
+                                            </Avatar>
+                                        </ListItemAvatar>
+                                        <ListItemText primary="Issuer" secondary={issuer} />
+                                    </ListItem>
+                                </List>
+                            </Grid>
+                        }
+
+                        {
+                            date && <Grid item xs={6}>
+                                <List>
+                                    <ListItem>
+                                        <ListItemAvatar>
+                                            <Avatar>
+                                                <Schedule />
+                                            </Avatar>
+                                        </ListItemAvatar>
+                                        <ListItemText primary="Date" secondary={date} />
+                                    </ListItem>
+                                </List>
+                            </Grid>
+                        }
+
                     </Grid>
 
                 </CardContent >

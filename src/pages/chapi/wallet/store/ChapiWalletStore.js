@@ -26,9 +26,15 @@ const ChapiWalletStore = (props) => {
       const credential = event.credential;
       // Display the credential details, for confirmation
       const vp = credential.data;
-      const vc = Array.isArray(vp.verifiableCredential)
-        ? vp.verifiableCredential[0]
-        : vp.verifiableCredential;
+      let vc;
+      if (vp.verifiableCredential) {
+        vc = Array.isArray(vp.verifiableCredential)
+          ? vp.verifiableCredential[0]
+          : vp.verifiableCredential;
+      } else {
+        vc = vp;
+      }
+
       setState({
         ...state,
         event,
