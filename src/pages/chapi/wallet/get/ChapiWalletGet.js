@@ -46,17 +46,22 @@ const ChapiWalletGet = (props) => {
       <div style={{ height: '100%', padding: '8px' }}>
         <Typography style={{ marginBottom: '8px', marginTop: '4px' }}>{state.event.credentialRequestOrigin} Is requesting a credential.</Typography>
 
-        <WalletContentsTable walletRows={props.walletObjectToArray(props.chapi.wallet.object)} onShare={(vc) => {
-          const vp = {
-            "@context": [
-              "https://www.w3.org/2018/credentials/v1",
-              "https://www.w3.org/2018/credentials/examples/v1"
-            ],
-            "type": "VerifiablePresentation",
-            "verifiableCredential": vc
+        <WalletContentsTable walletRows={props.walletObjectToArray(props.chapi.wallet.object)} onShare={(thing) => {
+          let response = thing;
+          if (thing.type !== 'VerifiablePresentation') {
+            response = {
+              "@context": [
+                "https://www.w3.org/2018/credentials/v1",
+                "https://www.w3.org/2018/credentials/examples/v1"
+              ],
+              "type": "VerifiablePresentation",
+              "verifiableCredential": thing
+            }
           }
           state.event
-            .respondWith(Promise.resolve({ dataType: 'VerifiablePresentation', data: vp }));
+            .respondWith(Promise.resolve({
+              dataType: 'VerifiablePresentation', data: response
+            }));
         }} />
 
       </div>
