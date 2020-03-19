@@ -10,7 +10,7 @@ const { WebCredentialHandler, credentialHandlerPolyfill } = window;
 
 const ChapiWalletGet = (props) => {
   const [state, setState] = React.useState({
-    event: {}
+    event: {},
   })
   React.useEffect(() => {
     credentialHandlerPolyfill
@@ -46,7 +46,7 @@ const ChapiWalletGet = (props) => {
       <div style={{ height: '100%', padding: '8px' }}>
         <Typography style={{ marginBottom: '8px', marginTop: '4px' }}>{state.event.credentialRequestOrigin} Is requesting a credential.</Typography>
 
-        <WalletContentsTable walletRows={props.walletObjectToArray(props.chapi.wallet.object)} onShare={(thing) => {
+        <WalletContentsTable credentialRequestOptions={state.event.credentialRequestOptions} walletRows={props.walletObjectToArray(props.chapi.wallet.object)} onShare={(thing) => {
           let response = thing;
           if (thing.type !== 'VerifiablePresentation') {
             response = {
