@@ -33,6 +33,9 @@ function WalletContentsTable(props) {
                 // { title: 'ID', field: 'id' },
                 {
                     title: 'Type', field: 'type', render: (rowData) => {
+                        if (typeof rowData.type === 'string') {
+                            return _.startCase(rowData.type);
+                        }
                         if (rowData.type.length === 2) {
                             return _.startCase(rowData.type[1]);
                         }

@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 const walletObjectToArray = (walletContents = {}) => {
   let walletRows = [];
-  let keys = Object.keys(walletContents);
+  // let keys = Object.keys(walletContents);
   Object.values(walletContents).forEach((v1) => {
     if (v1.id) {
       walletRows.push(v1);
@@ -24,12 +24,12 @@ const walletObjectToArray = (walletContents = {}) => {
 
   walletRows = walletRows.map((v, i) => {
     if (!v.id) {
-      v.id = keys[i]
-      v.type = ['VerifiablePresentation', 'DIDAuth']
+      // v.id = keys[i]
+      // v.type = ['VerifiablePresentation', 'DIDAuth']
     }
     return v;
   })
-  console.log(walletRows);
+  // console.log(walletRows);
   return walletRows;
 }
 
@@ -46,8 +46,7 @@ export default compose(
         });
       } else {
         walletContents = JSON.parse(atob(walletContents));
-
-        console.log(walletContents)
+        // console.log(walletContents)
         setChapiProp({ wallet: { isLoaded: true, object: walletContents } });
       }
     },
