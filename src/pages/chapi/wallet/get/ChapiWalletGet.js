@@ -46,10 +46,10 @@ const ChapiWalletGet = (props) => {
       <div style={{ height: '100%', padding: '8px' }}>
         <Typography style={{ marginBottom: '8px', marginTop: '4px' }}>{state.event.credentialRequestOrigin} Is requesting a credential.</Typography>
 
-        <WalletContentsTable credentialRequestOptions={state.event.credentialRequestOptions} walletRows={props.walletObjectToArray(props.chapi.wallet.object)} onShare={(thing) => {
-          let response = thing;
+        <WalletContentsTable credentialRequestOptions={state.event.credentialRequestOptions} walletRows={props.walletObjectToArray(props.chapi.wallet.object)} onShare={async (thing) => {
+          let vp = thing;
           if (thing.type !== 'VerifiablePresentation') {
-            response = {
+            vp = {
               "@context": [
                 "https://www.w3.org/2018/credentials/v1",
                 "https://www.w3.org/2018/credentials/examples/v1"
@@ -58,9 +58,31 @@ const ChapiWalletGet = (props) => {
               "verifiableCredential": thing
             }
           }
+          // TODO: Sign Presentation...
+          const endpoint = 'https://vc.transmute.world/vc-data-model/presentations'
+
+          const response = await fetch(endpoint, {
+            method: 'POST',
+            mode: 'cors',
+            cache: 'no-cache',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            redirect: 'follow',
+            referrerPolicy: 'no-referrer',
+            body: JSON.stringify({
+              presentation: vp, options: {
+                proofPurpose: "assertionMethod",
+                verificationMethod: "did:web:vc.transmute.world#z6MksHh7qHWvybLg5QTPPdG2DgEjjduBDArV9EF9mRiRzMBN"
+              }
+            })
+          });
+
+          let signedVp = await response.json();
+
           state.event
             .respondWith(Promise.resolve({
-              dataType: 'VerifiablePresentation', data: response
+              dataType: 'VerifiablePresentation', data: signedVp
             }));
         }} />
 
