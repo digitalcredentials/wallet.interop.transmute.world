@@ -28,9 +28,40 @@ const ChapiWalletGet = (props) => {
       console.log('Wallet processing get() event:', event);
       const vp = event.credentialRequestOptions.web.VerifiablePresentation;
       const query = Array.isArray(vp.query) ? vp.query[0] : vp.query;
-      if (!query.type === 'QueryByExample') {
-        throw new Error('Only QueryByExample requests are supported in demo wallet.');
+
+      if (query.type === 'DIDAuth') {
+        // TODO: Sign Presentation...
+        const endpoint = 'https://vc.transmute.world/vc-data-model/presentations'
+
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          mode: 'cors',
+          cache: 'no-cache',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          redirect: 'follow',
+          referrerPolicy: 'no-referrer',
+          body: JSON.stringify({
+            presentation: {
+              "@context": "https://www.w3.org/2018/credentials/v1",
+              "type": "VerifiablePresentation",
+              "holder": "did:web:vc.transmute.world",
+            }, options: {
+              proofPurpose: "authentication",
+              domain: event.credentialRequestOrigin.split('//').pop(),
+              challenge: event.credentialRequestOptions.web.VerifiablePresentation.query.challenge,
+              verificationMethod: "did:web:vc.transmute.world#z6MksHh7qHWvybLg5QTPPdG2DgEjjduBDArV9EF9mRiRzMBN"
+            }
+          })
+        });
+
+        let signedDIDAuthResponse = await response.json();
+        props.storeInWallet(signedDIDAuthResponse);
+
       }
+
+
       setState({
         ...state,
         event,

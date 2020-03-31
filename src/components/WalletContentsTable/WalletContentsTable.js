@@ -49,6 +49,7 @@ function WalletContentsTable(props) {
                 if (typeof rowData.type === 'string') {
                     return _.startCase(rowData.type);
                 }
+                console.log(rowData.type)
                 if (rowData.type.length === 2) {
                     return _.startCase(rowData.type[1]);
                 }
