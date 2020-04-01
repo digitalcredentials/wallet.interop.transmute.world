@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import BasePage from "../BasePage/BasePage";
 
 import WalletContentsTable from '../../components/WalletContentsTable'
+import HolderDID from '../../components/HolderDID'
 
 const { credentialHandlerPolyfill } = window;
 
@@ -22,6 +23,7 @@ const HomePage = (props) => {
 
   return (
     <BasePage tmui={tmui} setTmuiProp={setTmuiProp}>
+      <HolderDID />
       <WalletContentsTable title={'Wallet'} walletRows={props.walletObjectToArray(props.chapi.wallet.object)} />
     </BasePage>
   )

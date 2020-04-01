@@ -34,7 +34,7 @@ function WalletContentsTable(props) {
             credentialRequestOptions.web.VerifiablePresentation.query[0] : credentialRequestOptions.web.VerifiablePresentation.query;
 
         let typeFilterDefault = ''
-        if (query.type == 'DIDAuth') {
+        if (query.type === 'DIDAuth') {
             typeFilterDefault = "VerifiablePresentation"
         }
         if (query.credentialQuery) {
@@ -63,7 +63,7 @@ function WalletContentsTable(props) {
                 return rowData.type === term;
             }
         })
-        if (query.type == 'DIDAuth') {
+        if (query.type === 'DIDAuth') {
             columns.push({
                 title: 'Domain', field: 'domain', render: (rowData) => {
                     return rowData.proof.domain;

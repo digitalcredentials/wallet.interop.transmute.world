@@ -8,6 +8,32 @@ import WalletContentsTable from '../../../../components/WalletContentsTable'
 
 const { WebCredentialHandler, credentialHandlerPolyfill } = window;
 
+const getHolderAndVerificationMethod = () => {
+  let holder = localStorage.getItem('holder');
+  if (!holder) {
+    holder = 'did:web:vc.transmute.world';
+    localStorage.setItem('holder', holder);
+  }
+  let verificationMethod;
+  switch (holder) {
+    case 'did:web:vc.transmute.world': {
+      verificationMethod = "did:web:vc.transmute.world#z6MksHh7qHWvybLg5QTPPdG2DgEjjduBDArV9EF9mRiRzMBN";
+      break;
+    }
+    case 'did:key:z6MkjRagNiMu91DduvCvgEsqLZDVzrJzFrwahc4tXLt9DoHd': {
+      verificationMethod = "did:key:z6MkjRagNiMu91DduvCvgEsqLZDVzrJzFrwahc4tXLt9DoHd#z6MkjRagNiMu91DduvCvgEsqLZDVzrJzFrwahc4tXLt9DoHd";
+      break;
+    }
+    case 'did:elem:EiBJJPdo-ONF0jxqt8mZYEj9Z7FbdC87m2xvN0_HAbcoEg': {
+      verificationMethod = "did:elem:EiBJJPdo-ONF0jxqt8mZYEj9Z7FbdC87m2xvN0_HAbcoEg#xqc3gS1gz1vch7R3RvNebWMjLvBOY-n_14feCYRPsUo";
+      break;
+    }
+    default:
+      throw new Error('unsupported demo holder.')
+  }
+  return { holder, verificationMethod };
+}
+
 const ChapiWalletGet = (props) => {
   const [state, setState] = React.useState({
     event: {},
@@ -32,7 +58,7 @@ const ChapiWalletGet = (props) => {
       if (query.type === 'DIDAuth') {
         // TODO: Sign Presentation...
         const endpoint = 'https://vc.transmute.world/vc-data-model/presentations'
-
+        const { holder, verificationMethod } = getHolderAndVerificationMethod();
         const response = await fetch(endpoint, {
           method: 'POST',
           mode: 'cors',
@@ -46,12 +72,12 @@ const ChapiWalletGet = (props) => {
             presentation: {
               "@context": "https://www.w3.org/2018/credentials/v1",
               "type": "VerifiablePresentation",
-              "holder": "did:web:vc.transmute.world",
+              holder,
             }, options: {
               proofPurpose: "authentication",
               domain: event.credentialRequestOrigin.split('//').pop(),
               challenge: event.credentialRequestOptions.web.VerifiablePresentation.query.challenge,
-              verificationMethod: "did:web:vc.transmute.world#z6MksHh7qHWvybLg5QTPPdG2DgEjjduBDArV9EF9mRiRzMBN"
+              verificationMethod
             }
           })
         });
@@ -79,18 +105,22 @@ const ChapiWalletGet = (props) => {
 
         <WalletContentsTable credentialRequestOptions={state.event.credentialRequestOptions} walletRows={props.walletObjectToArray(props.chapi.wallet.object)} onShare={async (thing) => {
           let vp = thing;
+          const { holder, verificationMethod } = getHolderAndVerificationMethod();
           if (thing.type !== 'VerifiablePresentation') {
             vp = {
               "@context": [
                 "https://www.w3.org/2018/credentials/v1",
                 "https://www.w3.org/2018/credentials/examples/v1"
               ],
+              holder,
               "type": "VerifiablePresentation",
               "verifiableCredential": thing
             }
           }
-          // TODO: Sign Presentation...
+
           const endpoint = 'https://vc.transmute.world/vc-data-model/presentations'
+
+          console.warn('domain and challenge must be provided by query...');
 
           const response = await fetch(endpoint, {
             method: 'POST',
@@ -103,8 +133,11 @@ const ChapiWalletGet = (props) => {
             referrerPolicy: 'no-referrer',
             body: JSON.stringify({
               presentation: vp, options: {
-                proofPurpose: "assertionMethod",
-                verificationMethod: "did:web:vc.transmute.world#z6MksHh7qHWvybLg5QTPPdG2DgEjjduBDArV9EF9mRiRzMBN"
+                proofPurpose: "authentication",
+                // Pending review....
+                domain: "TBD",
+                challenge: "TBD",
+                verificationMethod
               }
             })
           });
