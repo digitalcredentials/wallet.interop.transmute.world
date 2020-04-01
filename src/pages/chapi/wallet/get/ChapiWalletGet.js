@@ -34,6 +34,23 @@ const getHolderAndVerificationMethod = () => {
   return { holder, verificationMethod };
 }
 
+const getDomainAndChallenge = (event) => {
+  let { challenge, domain, query } = event.credentialRequestOptions.web.VerifiablePresentation;
+
+  if (query.challenge) {
+    challenge = query.challenge;
+  }
+
+  if (query.domain) {
+    domain = query.domain;
+  }
+
+  if (!domain) {
+    domain = event.credentialRequestOrigin.split('//').pop()
+  }
+  return { domain, challenge };
+}
+
 const ChapiWalletGet = (props) => {
   const [state, setState] = React.useState({
     event: {},
@@ -55,23 +72,13 @@ const ChapiWalletGet = (props) => {
       const vp = event.credentialRequestOptions.web.VerifiablePresentation;
       const query = Array.isArray(vp.query) ? vp.query[0] : vp.query;
 
+
+
       if (query.type === 'DIDAuth') {
         // TODO: Sign Presentation...
         const endpoint = 'https://vc.transmute.world/vc-data-model/presentations'
         const { holder, verificationMethod } = getHolderAndVerificationMethod();
-        let { challenge, domain } = event.credentialRequestOptions.web.VerifiablePresentation;
-
-        if (query.challenge) {
-          challenge = query.challenge;
-        }
-
-        if (query.domain) {
-          domain = query.domain;
-        }
-
-        if (!domain) {
-          domain = event.credentialRequestOrigin.split('//').pop()
-        }
+        const { domain, challenge } = getDomainAndChallenge(event);
 
         const response = await fetch(endpoint, {
           method: 'POST',
@@ -133,7 +140,7 @@ const ChapiWalletGet = (props) => {
 
           if (!vp.proof) {
             const endpoint = 'https://vc.transmute.world/vc-data-model/presentations'
-            console.warn('domain and challenge must be provided by query...');
+            const { domain, challenge } = getDomainAndChallenge(state.event);
             const response = await fetch(endpoint, {
               method: 'POST',
               mode: 'cors',
@@ -146,9 +153,8 @@ const ChapiWalletGet = (props) => {
               body: JSON.stringify({
                 presentation: vp, options: {
                   proofPurpose: "authentication",
-                  // Pending review....
-                  domain: "TBD",
-                  challenge: "TBD",
+                  domain,
+                  challenge,
                   verificationMethod
                 }
               })
