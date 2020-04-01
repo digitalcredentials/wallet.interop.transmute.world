@@ -59,6 +59,21 @@ const ChapiWalletGet = (props) => {
         // TODO: Sign Presentation...
         const endpoint = 'https://vc.transmute.world/vc-data-model/presentations'
         const { holder, verificationMethod } = getHolderAndVerificationMethod();
+        let { challenge, domain } = event.credentialRequestOptions.web.VerifiablePresentation;
+
+        if (query.challenge) {
+          challenge = query.challenge;
+        }
+
+        if (query.domain) {
+          domain = query.domain;
+        }
+
+        if (!domain) {
+          domain = event.credentialRequestOrigin.split('//').pop()
+        }
+
+
         const response = await fetch(endpoint, {
           method: 'POST',
           mode: 'cors',
@@ -75,8 +90,8 @@ const ChapiWalletGet = (props) => {
               holder,
             }, options: {
               proofPurpose: "authentication",
-              domain: event.credentialRequestOrigin.split('//').pop(),
-              challenge: event.credentialRequestOptions.web.VerifiablePresentation.query.challenge,
+              domain,
+              challenge,
               verificationMethod
             }
           })
