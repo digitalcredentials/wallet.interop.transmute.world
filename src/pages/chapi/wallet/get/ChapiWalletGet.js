@@ -73,7 +73,6 @@ const ChapiWalletGet = (props) => {
           domain = event.credentialRequestOrigin.split('//').pop()
         }
 
-
         const response = await fetch(endpoint, {
           method: 'POST',
           mode: 'cors',
@@ -101,7 +100,6 @@ const ChapiWalletGet = (props) => {
         props.storeInWallet(signedDIDAuthResponse);
 
       }
-
 
       setState({
         ...state,
@@ -133,35 +131,35 @@ const ChapiWalletGet = (props) => {
             }
           }
 
-          const endpoint = 'https://vc.transmute.world/vc-data-model/presentations'
+          if (!vp.proof) {
+            const endpoint = 'https://vc.transmute.world/vc-data-model/presentations'
+            console.warn('domain and challenge must be provided by query...');
+            const response = await fetch(endpoint, {
+              method: 'POST',
+              mode: 'cors',
+              cache: 'no-cache',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              redirect: 'follow',
+              referrerPolicy: 'no-referrer',
+              body: JSON.stringify({
+                presentation: vp, options: {
+                  proofPurpose: "authentication",
+                  // Pending review....
+                  domain: "TBD",
+                  challenge: "TBD",
+                  verificationMethod
+                }
+              })
+            });
+            vp = await response.json();
+          }
 
-          console.warn('domain and challenge must be provided by query...');
-
-          const response = await fetch(endpoint, {
-            method: 'POST',
-            mode: 'cors',
-            cache: 'no-cache',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            redirect: 'follow',
-            referrerPolicy: 'no-referrer',
-            body: JSON.stringify({
-              presentation: vp, options: {
-                proofPurpose: "authentication",
-                // Pending review....
-                domain: "TBD",
-                challenge: "TBD",
-                verificationMethod
-              }
-            })
-          });
-
-          let signedVp = await response.json();
 
           state.event
             .respondWith(Promise.resolve({
-              dataType: 'VerifiablePresentation', data: signedVp
+              dataType: 'VerifiablePresentation', data: vp
             }));
         }} />
 
