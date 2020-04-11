@@ -7,6 +7,7 @@ import { darken, lighten } from '@material-ui/core/styles/colorManipulator';
 
 const primaryColor = '#594aa8';
 const secondaryColor = '#fcb373';
+const primaryColor2 = '#303f9f'
 
 const font1 = '"Rajdhani"';
 const font2 = '"Roboto Condensed"';

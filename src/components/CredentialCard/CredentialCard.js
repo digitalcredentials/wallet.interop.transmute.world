@@ -2,125 +2,137 @@ import React from 'react';
 import _ from 'lodash';
 import moment from 'moment';
 import { makeStyles } from '@material-ui/core/styles';
-import Card from '@material-ui/core/Card';
+import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 
-import CardActionArea from '@material-ui/core/CardActionArea';
-import CardContent from '@material-ui/core/CardContent';
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import Typography from '@material-ui/core/Typography';
-
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import Avatar from '@material-ui/core/Avatar';
-import Schedule from '@material-ui/icons/Schedule';
-import Fingerprint from '@material-ui/icons/Fingerprint';
-import AccountBalance from '@material-ui/icons/AccountBalance';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 
-const useStyles = makeStyles({
+const excludedCredentialSubjectProperties = ['image', 'type'];
+const excludedCredentialProperties = ['credentialSubject', 'type', '@context', 'proof'];
+const dateKeys = ['issuanceDate', 'expirationDate'];
+
+const useStyles = makeStyles((theme) => ({
     root: {
-        margin: 'auto',
-        marginTop: '5%',
-        maxWidth: 545,
+        width: '100%',
     },
-});
+    heading: {
+        fontSize: theme.typography.pxToRem(15),
+        fontWeight: theme.typography.fontWeightRegular,
+    },
+}));
 
-export default function CredentialCard({ vc }) {
+
+export default function BasicCard({ verifiableCredential }) {
     const classes = useStyles();
-    let type = undefined
-    let date = undefined
-    let issuer = undefined
-    let subject = undefined
 
-    console.log(vc)
+    const [expanded, setExpanded] = React.useState('panel1');
 
-    if (vc.type) {
-        type = !Array.isArray(vc.type)
-            ? vc.type
-            : vc.type.slice(1).join('/');
+    const handleChange = (panel) => (event, newExpanded) => {
+        setExpanded(newExpanded ? panel : false);
+    };
+
+
+    const renderProp = (prop, key) => {
+        let value = prop.toString();
+        if (value === 'true') {
+            return <span style={{ borderRadius: '4px', padding: '4px', backgroundColor: '#d32f2f', color: '#fff' }}>{'Positive'}</span>
+        }
+        if (value === 'false') {
+            return <span style={{ borderRadius: '4px', padding: '4px', backgroundColor: '#7cb342' }}>{'Negative'}</span>
+        }
+        if (dateKeys.indexOf(key) !== -1) {
+            return moment(value).fromNow()
+        }
+        return <span style={{ wordBreak: 'break-all', paddingLeft: '16px' }}>{value.slice(0, 64)}</span>;
     }
 
-    if (type === 'VerifiablePresentation') {
-        type = 'DIDAuth'
-    }
-
-    if (vc.issuer) {
-        issuer = typeof vc.issuer === 'string' ? vc.issuer : vc.issuer.id;
-    }
-
-    if (vc.credentialSubject) {
-        subject = vc.credentialSubject.id
-    }
-
-    if (vc.holder) {
-        subject = vc.holder;
-        issuer = vc.holder;
-    }
-
-    if (vc.issuanceDate) {
-        date = moment(vc.issuanceDate).format('LLL')
-    }
+    const subject = verifiableCredential.credentialSubject.cmtr ? verifiableCredential.credentialSubject.cmtr : verifiableCredential.credentialSubject
 
     return (
-        <Card className={classes.root}>
-            <CardActionArea>
-                <CardContent>
-                    <Typography gutterBottom variant="h5" component="h2">
-                        {_.startCase(type)}
-                    </Typography>
+        <Box>
+            <ExpansionPanel>
+                <ExpansionPanelSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="panel1a-content"
+                    id="panel1a-header"
+                >
+                    <Typography className={classes.heading}>Credential</Typography>
+                </ExpansionPanelSummary>
+                <ExpansionPanelDetails>
+                    <Box style={{ padding: '0 16px' }} flexGrow={1}>
+                        {
+                            Object.keys(verifiableCredential).map((k) => {
+                                if (excludedCredentialProperties.indexOf(k) === -1) {
+                                    return (<Box display="flex" p={1} key={k} style={{
+                                        fontSize: '.8em',
+                                        borderBottom: '1px solid #000',
+                                        marginBottom: '8px'
 
+                                    }}>
+                                        <Box flexGrow={1}>
+                                            <span style={{ fontWeight: 700 }}>{k}</span>
+                                        </Box>
+                                        <Box>
+                                            {renderProp(verifiableCredential[k], k)}
+                                        </Box>
+                                    </Box>)
+                                }
+                            })
+                        }
+                    </Box>
+                </ExpansionPanelDetails>
+            </ExpansionPanel>
+            <ExpansionPanel expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
+                <ExpansionPanelSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="panel2a-content"
+                    id="panel2a-header"
+                >
+                    <Typography className={classes.heading}>Subject</Typography>
+                </ExpansionPanelSummary>
+                <ExpansionPanelDetails>
                     <Grid container>
+
                         {
-                            subject && <Grid item xs={12}>
-                                <List>
-                                    <ListItem>
-                                        <ListItemAvatar>
-                                            <Avatar>
-                                                <Fingerprint />
-                                            </Avatar>
-                                        </ListItemAvatar>
-                                        <ListItemText primary="Subject" secondary={subject} />
-                                    </ListItem>
-                                </List>
+                            verifiableCredential.credentialSubject.image &&
+                            <Grid item xs={12} lg={4}>
+                                <Box>
+                                    <img src={verifiableCredential.credentialSubject.image} />
+                                </Box>
                             </Grid>
                         }
 
-                        {
-                            issuer && <Grid item xs={6}>
-                                <List>
-                                    <ListItem>
-                                        <ListItemAvatar>
-                                            <Avatar>
-                                                <AccountBalance />
-                                            </Avatar>
-                                        </ListItemAvatar>
-                                        <ListItemText primary="Issuer" secondary={issuer} />
-                                    </ListItem>
-                                </List>
-                            </Grid>
-                        }
+                        <Grid item xs={12} lg={verifiableCredential.credentialSubject.image ? 8 : 12}>
+                            {
+                                Object.keys(subject).map((k) => {
+                                    if (excludedCredentialSubjectProperties.indexOf(k) === -1 && typeof subject[k] !== 'object') {
+                                        return (<Box display="flex" p={1} key={k} style={{
+                                            fontSize: '.8em',
+                                            borderBottom: '1px solid #000',
+                                            marginBottom: '8px'
 
-                        {
-                            date && <Grid item xs={6}>
-                                <List>
-                                    <ListItem>
-                                        <ListItemAvatar>
-                                            <Avatar>
-                                                <Schedule />
-                                            </Avatar>
-                                        </ListItemAvatar>
-                                        <ListItemText primary="Date" secondary={date} />
-                                    </ListItem>
-                                </List>
-                            </Grid>
-                        }
-
+                                        }}>
+                                            <Box flexGrow={1}>
+                                                <span style={{ fontWeight: 700 }}>{k}</span>
+                                            </Box>
+                                            <Box>
+                                                {renderProp(subject[k])}
+                                            </Box>
+                                        </Box>)
+                                    }
+                                })
+                            }
+                        </Grid>
                     </Grid>
 
-                </CardContent >
-            </CardActionArea >
-        </Card >
+
+                </ExpansionPanelDetails>
+            </ExpansionPanel>
+        </Box>
     );
 }

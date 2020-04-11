@@ -3,9 +3,9 @@
 import React from "react";
 import MaterialTable from "material-table";
 import Button from '@material-ui/core/Button'
-import JSONEditor from '../JSONEditor/JSONEditor';
-import _ from 'lodash';
 
+import _ from 'lodash';
+import CredentialDetailPanel from './CredentialDetailPanel'
 function WalletContentsTable(props) {
 
     let actions = [];
@@ -110,10 +110,7 @@ function WalletContentsTable(props) {
                 let withoutMutation = { ...rowData };
                 delete withoutMutation.tableData;
                 return (
-                    <JSONEditor
-                        jsonObject={withoutMutation}
-                    // style={{ height: "128px" }}
-                    />
+                    <CredentialDetailPanel verifiableCredential={withoutMutation} />
                 )
             }}
         />

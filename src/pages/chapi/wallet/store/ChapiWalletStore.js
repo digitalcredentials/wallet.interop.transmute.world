@@ -56,21 +56,24 @@ const ChapiWalletStore = (props) => {
       <div style={{ height: '100%', padding: '8px' }}>
         <Typography style={{ marginBottom: '8px', marginTop: '4px' }}>Are you sure you wish to store this credential?</Typography>
 
-        <CredentialCard vc={state.vc} />
+        <CredentialCard verifiableCredential={state.vc} />
 
-        <Button style={{ position: 'absolute', bottom: '10px', left: '10px' }} onClick={() => {
-          state.event.respondWith(new Promise(resolve => {
-            return resolve({ dataType: 'Response', data: 'canceled' });
-          }))
-        }}>Cancel</Button>
+        <div style={{ marginTop: '32px' }}>
+          <Button onClick={() => {
+            state.event.respondWith(new Promise(resolve => {
+              return resolve({ dataType: 'Response', data: 'canceled' });
+            }))
+          }}>Cancel</Button>
 
-        <Button variant={'contained'} color={'primary'} style={{ position: 'absolute', bottom: '10px', right: '10px' }} onClick={() => {
+          <Button style={{ float: 'right' }} variant={'contained'} color={'primary'} onClick={() => {
 
-          props.storeInWallet(state.credential.data);
-          state.event.respondWith(new Promise(resolve => {
-            return resolve({ dataType: 'Response', data: 'result' });
-          }))
-        }}>Confirm</Button>
+            props.storeInWallet(state.credential.data);
+            state.event.respondWith(new Promise(resolve => {
+              return resolve({ dataType: 'Response', data: 'result' });
+            }))
+          }}>Confirm</Button>
+        </div>
+
       </div>
     </Theme>
   )
