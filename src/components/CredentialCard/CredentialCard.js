@@ -48,6 +48,9 @@ export default function BasicCard({ verifiableCredential }) {
         if (dateKeys.indexOf(key) !== -1) {
             return moment(value).fromNow()
         }
+        if (typeof prop === 'object' && prop.id) {
+            value = prop.id;
+        }
         return <span style={{ wordBreak: 'break-all', paddingLeft: '16px' }}>{value.slice(0, 64)}</span>;
     }
 
