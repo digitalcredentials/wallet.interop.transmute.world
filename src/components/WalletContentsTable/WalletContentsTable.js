@@ -64,13 +64,22 @@ function WalletContentsTable(props) {
             }
         })
         if (query.type === 'DIDAuth') {
+            // columns.push({
+            //     title: 'Domain', field: 'domain', render: (rowData) => {
+            //         return rowData.proof.domain;
+            //     },
+            //     defaultFilter: credentialRequestOptions.web.VerifiablePresentation.domain,
+            //     customFilterAndSearch: (term, rowData) => {
+            //         return rowData.proof.domain === term;
+            //     }
+            // })
             columns.push({
-                title: 'Domain', field: 'domain', render: (rowData) => {
-                    return rowData.proof.domain;
+                title: 'Challenge', field: 'challenge', render: (rowData) => {
+                    return rowData.proof.challenge;
                 },
-                defaultFilter: credentialRequestOptions.web.VerifiablePresentation.domain,
+                defaultFilter: credentialRequestOptions.web.VerifiablePresentation.challenge,
                 customFilterAndSearch: (term, rowData) => {
-                    return rowData.proof.domain === term;
+                    return rowData.proof.challenge === term;
                 }
             })
         }

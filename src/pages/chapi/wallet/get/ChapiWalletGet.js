@@ -54,6 +54,7 @@ const getDomainAndChallenge = (event) => {
 const ChapiWalletGet = (props) => {
   const [state, setState] = React.useState({
     event: {},
+    query: {}
   })
   React.useEffect(() => {
     credentialHandlerPolyfill
@@ -111,6 +112,7 @@ const ChapiWalletGet = (props) => {
       setState({
         ...state,
         event,
+        query
       })
     }
     credentialHandlerPolyfill
@@ -121,7 +123,9 @@ const ChapiWalletGet = (props) => {
   return (
     <Theme>
       <div style={{ height: '100%', padding: '8px' }}>
-        <Typography style={{ marginBottom: '8px', marginTop: '4px' }}>{state.event.credentialRequestOrigin} Is requesting a credential.</Typography>
+        <Typography style={{ marginBottom: '8px', marginTop: '4px' }}>
+          {state.event.credentialRequestOrigin} has requested a {state.query.type}.
+          </Typography>
 
         <WalletContentsTable credentialRequestOptions={state.event.credentialRequestOptions} walletRows={props.walletObjectToArray(props.chapi.wallet.object)} onShare={async (thing) => {
           let vp = thing;
