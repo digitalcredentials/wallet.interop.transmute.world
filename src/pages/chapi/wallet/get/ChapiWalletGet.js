@@ -77,7 +77,7 @@ const ChapiWalletGet = (props) => {
 
       if (query.type === 'DIDAuth') {
         // TODO: Sign Presentation...
-        const endpoint = 'https://vc.transmute.world/v0.1.0​/prove​/presentations'
+        const endpoint = 'https://vc.transmute.world​/v0.1.0/prove/presentations'
         const { holder, verificationMethod } = getHolderAndVerificationMethod();
         const { domain, challenge } = getDomainAndChallenge(event);
 
@@ -143,7 +143,8 @@ const ChapiWalletGet = (props) => {
           }
 
           if (!vp.proof) {
-            const endpoint = 'https://vc.transmute.world​/v0.1.0​/prove​/presentations'
+            // /v0.1.0​/prove​/presentations
+            const endpoint = 'https://vc.transmute.world​/v0.1.0/prove/presentations'
             const { domain, challenge } = getDomainAndChallenge(state.event);
             const response = await fetch(endpoint, {
               method: 'POST',
