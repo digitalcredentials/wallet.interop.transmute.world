@@ -9,7 +9,7 @@ function HolderDID() {
     let holder = localStorage.getItem('holder');
 
     if (!holder) {
-        holder = 'did:web:vc.transmute.world';
+        holder = 'did:key:z6MkjRagNiMu91DduvCvgEsqLZDVzrJzFrwahc4tXLt9DoHd';
         localStorage.setItem('holder', holder);
     }
 
@@ -31,7 +31,7 @@ function HolderDID() {
             >
                 <MenuItem value={'did:web:vc.transmute.world'}>did:web:vc.transmute.world</MenuItem>
                 <MenuItem value={'did:key:z6MkjRagNiMu91DduvCvgEsqLZDVzrJzFrwahc4tXLt9DoHd'}>did:key:z6MkjRagNiMu91DduvCvgEsqLZDVzrJzFrwahc4tXLt9DoHd</MenuItem>
-                <MenuItem value={'did:elem:EiBJJPdo-ONF0jxqt8mZYEj9Z7FbdC87m2xvN0_HAbcoEg'}>did:elem:EiBJJPdo-ONF0jxqt8mZYEj9Z7FbdC87m2xvN0_HAbcoEg</MenuItem>
+                <MenuItem value={'did:elem:ropsten:EiBJJPdo-ONF0jxqt8mZYEj9Z7FbdC87m2xvN0_HAbcoEg'}>did:elem:EiBJJPdo-ONF0jxqt8mZYEj9Z7FbdC87m2xvN0_HAbcoEg</MenuItem>
             </Select>
         </div>
     );

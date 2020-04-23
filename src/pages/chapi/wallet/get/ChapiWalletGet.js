@@ -24,8 +24,8 @@ const getHolderAndVerificationMethod = () => {
       verificationMethod = "did:key:z6MkjRagNiMu91DduvCvgEsqLZDVzrJzFrwahc4tXLt9DoHd#z6MkjRagNiMu91DduvCvgEsqLZDVzrJzFrwahc4tXLt9DoHd";
       break;
     }
-    case 'did:elem:EiBJJPdo-ONF0jxqt8mZYEj9Z7FbdC87m2xvN0_HAbcoEg': {
-      verificationMethod = "did:elem:EiBJJPdo-ONF0jxqt8mZYEj9Z7FbdC87m2xvN0_HAbcoEg#xqc3gS1gz1vch7R3RvNebWMjLvBOY-n_14feCYRPsUo";
+    case 'did:elem:ropsten:EiBJJPdo-ONF0jxqt8mZYEj9Z7FbdC87m2xvN0_HAbcoEg': {
+      verificationMethod = "did:elem:ropsten:EiBJJPdo-ONF0jxqt8mZYEj9Z7FbdC87m2xvN0_HAbcoEg#xqc3gS1gz1vch7R3RvNebWMjLvBOY-n_14feCYRPsUo";
       break;
     }
     default:
@@ -138,7 +138,7 @@ const ChapiWalletGet = (props) => {
               ],
               holder,
               "type": "VerifiablePresentation",
-              "verifiableCredential": thing
+              "verifiableCredential": [thing]
             }
           }
 
