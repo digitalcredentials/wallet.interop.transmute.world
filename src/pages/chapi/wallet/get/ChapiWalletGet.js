@@ -11,7 +11,7 @@ const { WebCredentialHandler, credentialHandlerPolyfill } = window;
 const getHolderAndVerificationMethod = () => {
   let holder = localStorage.getItem('holder');
   if (!holder) {
-    holder = 'did:web:vc.transmute.world';
+    holder = 'did:key:z6MkjRagNiMu91DduvCvgEsqLZDVzrJzFrwahc4tXLt9DoHd';
     localStorage.setItem('holder', holder);
   }
   let verificationMethod;
@@ -77,7 +77,7 @@ const ChapiWalletGet = (props) => {
 
       if (query.type === 'DIDAuth') {
         // TODO: Sign Presentation...
-        const endpoint = 'https://vc.transmute.world/vc-data-model/presentations'
+        const endpoint = 'https://vc.transmute.world/v0.1.0​/prove​/presentations'
         const { holder, verificationMethod } = getHolderAndVerificationMethod();
         const { domain, challenge } = getDomainAndChallenge(event);
 
@@ -143,7 +143,7 @@ const ChapiWalletGet = (props) => {
           }
 
           if (!vp.proof) {
-            const endpoint = 'https://vc.transmute.world/vc-data-model/presentations'
+            const endpoint = 'https://vc.transmute.world​/v0.1.0​/prove​/presentations'
             const { domain, challenge } = getDomainAndChallenge(state.event);
             const response = await fetch(endpoint, {
               method: 'POST',
