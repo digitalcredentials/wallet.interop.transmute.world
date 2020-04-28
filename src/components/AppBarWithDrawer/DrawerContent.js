@@ -19,15 +19,15 @@ const sideMenuPrimaryItem = [
       history.push("/");
     }
   },
-  {
-    label: "Keystore",
-    icon: <VpnKeyIcon />,
-    showForRoles: ["tier0", "tier1", "tier2"],
-    onClick: () => {
-      history.push("/keystore");
-    }
-  },
-  
+  // {
+  //   label: "Keystore",
+  //   icon: <VpnKeyIcon />,
+  //   showForRoles: ["tier0", "tier1", "tier2"],
+  //   onClick: () => {
+  //     history.push("/keystore");
+  //   }
+  // },
+
   {
     label: "Source Code",
     icon: <CodeIcon />,
@@ -40,10 +40,10 @@ const sideMenuPrimaryItem = [
 
 function DrawerContent({ tmui, setTmuiProp }) {
   const [
-    values, 
+    values,
     // setValues
   ] = React.useState({
-    currentRole: tmui.currentRole     
+    currentRole: tmui.currentRole
   });
 
   return (

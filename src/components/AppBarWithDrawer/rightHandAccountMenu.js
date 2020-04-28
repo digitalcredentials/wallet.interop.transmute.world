@@ -24,22 +24,22 @@ const rightHandAccountMenu = [
       history.push("/");
     }
   },
-  {
-    badgeContent: 0,
-    ariaLabel: "keystore",
-    icon: <VpnKeyIcon />,
-    label: "Keystore",
-    onClick: () => {
-      history.push("/keystore");
-    }
-  },
+  // {
+  //   badgeContent: 0,
+  //   ariaLabel: "keystore",
+  //   icon: <VpnKeyIcon />,
+  //   label: "Keystore",
+  //   onClick: () => {
+  //     history.push("/keystore");
+  //   }
+  // },
   {
     badgeContent: 0,
     label: "Source Code",
     ariaLabel: "source",
     icon: <CodeIcon />,
     onClick: () => {
-      window.open("https://github.com/transmute-industries/did-key", "_blank");
+      window.open("https://github.com/transmute-industries/wallet.interop.transmute.world", "_blank");
     }
   }
 ];
